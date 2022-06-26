@@ -9,7 +9,7 @@ import java.sql.*;
 public class profile extends Frame implements ActionListener{
 	JTable table;
 	String username;
-	JButton pay;
+	JButton pay,logout;
 	String[] columnsNames = {"Tranasaction ID","Date","UNITS Consumed","Amount","Status"};
 	public profile(String username) {
 		super("PROFILE");
@@ -42,7 +42,11 @@ public class profile extends Frame implements ActionListener{
 		
 		pay = new JButton("PAY");
 		pay.addActionListener(this);
+		logout = new JButton("LOGOUT");
+		logout.addActionListener(this);
+		
 		p2.add(pay);
+		p2.add(logout);
 		
 		add(p2,BorderLayout.SOUTH);
         
@@ -92,6 +96,14 @@ public class profile extends Frame implements ActionListener{
 			} catch (SQLException e1) {
 				new profile(username);
 				JOptionPane.showMessageDialog(this,"NO PENDING PAYMENTS");
+			}
+		}
+		if(e.getSource()==logout) {
+			try {
+				dispose();
+				new Authentication();
+			}catch(Exception er) {
+				JOptionPane.showMessageDialog(this,"ERROR"+er.toString());
 			}
 		}
 	}

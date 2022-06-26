@@ -47,7 +47,7 @@ public class add_new_customer extends Frame implements ActionListener {
         p1.add(email);
         p1.add(email_txt);
         ph_no = new JLabel("Phone Number");
-        ph_no_txt = new JTextField("1234");
+        ph_no_txt = new JTextField("");
         p1.add(ph_no);
         p1.add(ph_no_txt);
         
@@ -125,7 +125,7 @@ public class add_new_customer extends Frame implements ActionListener {
 				
 				s.setString(1,meter_no_txt.getText());
 				s.setString(2,name_txt.getText());
-				s.setString(3,"1234");
+				s.setString(3,password);
 				s.setString(4,address_txt.getText());
 				s.setString(5,email_txt.getText());
 				s.setString(6,ph_no_txt.getText());

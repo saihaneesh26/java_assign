@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.*;
@@ -14,7 +16,9 @@ public class meter_auth extends Frame implements ActionListener{
 	public meter_auth(){
 		
 		super("meter_auth");
-		
+		setLayout(new BorderLayout());
+		setSize(640,540);
+        setVisible(true);
 		meter_no = new JLabel("Meter Number");
 		meter_no_txt = new JTextField(15);
 		
@@ -36,9 +40,7 @@ public class meter_auth extends Frame implements ActionListener{
 		p2.add(Login_page);
 		p2.add(signup);
 		
-		setLayout(new BorderLayout());
-		setSize(640,540);
-        setVisible(true);
+		
 		
         ImageIcon ic3=new ImageIcon(ClassLoader.getSystemResource("images/shock1.jpg"));
         Image i3=ic3.getImage().getScaledInstance(340,370,Image.SCALE_DEFAULT);
@@ -65,10 +67,22 @@ public class meter_auth extends Frame implements ActionListener{
 		if(e.getSource()==pay) {
 			//redirect to paybill here generate_bill.java
 			try {
-				new generate_Bill(meter_no_txt.getText());			
-			} catch (SQLException e1) {
+				String sql = "select * from transactions "
+						+"where meterid = ?";
+						
+				PreparedStatement st = DB.connection.prepareStatement(sql);
+				st.setString(1, meter_no_txt.getText());
+				ResultSet res = st.executeQuery();
+
+				if(res.next()) {
+					dispose();
+					new generate_Bill(res.getString("meterid"));
+					return;
+				}
+				else throw new Exception("METERID doesn't Exist");
+			} catch (Exception e1) {
 				System.out.println(e1);
-				JOptionPane.showMessageDialog(this, "No USER");
+				JOptionPane.showMessageDialog(this, e1.getMessage().toString());
 			}
 		}
 		

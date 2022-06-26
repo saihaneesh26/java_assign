@@ -9,30 +9,31 @@ public class generate_Bill extends Frame implements ActionListener {
 	JLabel name, address ,ph_no, state, city, meter_no, email;
 	JButton print,exit,pay;
 	String username,transid;
-	public generate_Bill(String username) throws SQLException {
-		this.username = username;
+	public static boolean meter_flag = false;
+	public generate_Bill(String meterid) throws SQLException {
+		
 		String sql = "select * from customers c,transactions t "
-				+"where c.meterid = t.meterid "
+				+"1where c.meterid = t.meterid "
 				+"and t.status='pending' "
-				+"and c.name = ?";
+				+"and c.meterid = ?";
 				
 		PreparedStatement st = DB.connection.prepareStatement(sql);
-		st.setString(1, username);
+		st.setString(1, meterid);
 		ResultSet res = st.executeQuery();
-		Boolean flg = true;
-		while(res.next())
+		if(res.next())
 		{
-			flg = false;
-			System.out.println("ID");
-			new generate_Bill(res.getString("TransactionID"),username,res.getString("meterid"),res.getString("address"),res.getString("email"),res.getString("phone"),res.getString("date"),String.valueOf(res.getInt("units")),String.valueOf(res.getInt("amount")),res.getString("status"));
+			this.meter_flag = true;
+			System.out.println(this.meter_flag);
+			new generate_Bill(res.getString("TransactionID"),res.getString("name"),res.getString("meterid"),res.getString("address"),res.getString("email"),res.getString("phone"),res.getString("date"),String.valueOf(res.getInt("units")),String.valueOf(res.getInt("amount")),res.getString("status"));
 		}	
-		if (flg)
-			throw new SQLException("No USER");
+		else
+			throw new SQLException("No Pending Bills");
 	}
 	
 	public generate_Bill(String transid,String Name,String Meter_Number,String Address,String Mail,String Ph_num,String date,String units,String amount,String status){
 		
 		super("Generate BILL");
+		System.out.println(this.meter_flag);
 		this.transid = transid;
 		this.username = Name;
 		JPanel p =new JPanel();
@@ -81,8 +82,9 @@ public class generate_Bill extends Frame implements ActionListener {
         exit = new JButton("CANCEL");
 		
         pay.addActionListener(this);
-        
+        exit.addActionListener(this);
         p.add(pay);
+        p.add(exit);
         if(status.equals("pending")) {
         	add(p);
         }
@@ -125,7 +127,15 @@ public class generate_Bill extends Frame implements ActionListener {
 			}
 			JOptionPane.showMessageDialog(pay,"Paid Successfully");
 			dispose();
-			new profile(username);
+			System.out.println(generate_Bill.meter_flag);
+			if(!generate_Bill.meter_flag)
+				new profile(username);
+			else
+				new meter_auth();
+		}
+		if(e.getSource()==exit) {
+			this.dispose();
+			new Authentication();
 		}
 	}
 }
